@@ -25,31 +25,11 @@ WAIT_FOR_IT="/usr/share/piler/wait.sh"
 PILER_MYSQL_CNF="/etc/piler/.my.cnf"
 SSL_CERT_DATA="/C=US/ST=Denial/L=Springfield/O=Dis/CN=${PILER_HOSTNAME}"
 
-add_user(){
-   if [ -z "$(getent passwd $PILER_USER)" ]; then
-      echo "Adding piler user"
-      addgroup --gid "$PGID" "$PILER_USER" && \
-      useradd -ms /bin/bash -g "$PILER_USER" -u "$PUID" "$PILER_USER" 
-   else
-       echo "user $PILER_USER exists"
-   fi
-}
-
-install_piler(){
-   echo "Installing piler"
-    curl -J -L -o /tmp/piler.deb "$PILER_DEB" && \
-    dpkg -i /tmp/piler.deb
-}
-
-setup_cron(){
-   echo "Adding cron job"
-   crontab -u $PILER_USER /usr/share/piler/piler.cron
-}
 
 wait_for_sql() {
-   /usr/local/bin/docker-entrypoint.sh mariadbd
+   /usr/local/bin/docker-entrypoint.sh mariadbd &
    echo "Waiting for the SQL database to come online"
-   "$WAIT_FOR_IT" "${MYSQL_HOSTNAME}:3306 -s"
+   "$WAIT_FOR_IT" "${MYSQL_HOSTNAME}:3306 -s -t 0"
 }
 
 update_config_files() {
@@ -126,9 +106,11 @@ start_supervisored() {
 }
 
 wait_for_sql
-add_user
-install_piler
-setup_cron
+
 update_config_files
+
+#bash
 initialize_piler_data
-start_supervisored
+
+#start_supervisored
+
