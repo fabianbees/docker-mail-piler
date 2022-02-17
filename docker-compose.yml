@@ -1,4 +1,4 @@
-version: "3"
+version: "3.1"
 
 services:
   piler:
@@ -24,9 +24,11 @@ services:
       MYSQL_DATABASE: "piler"
       MYSQL_USERNAME: "piler"
       MYSQL_PASSWORD: "piler123"
+    networks: 
+      - backend
 
   piler-db:
-    image: mariadb:latest
+    image: mariadb:10.7-focal
     restart: always
     volumes:
       - ./mysql:/var/lib/mysql
@@ -35,3 +37,9 @@ services:
       MYSQL_DATABASE: "piler"
       MYSQL_USER: "piler"
       MYSQL_PASSWORD: "piler123"
+    networks: 
+      - backend
+
+networks:
+  backend:
+    driver: "bridge"

@@ -47,6 +47,7 @@ setup_cron(){
 }
 
 wait_for_sql() {
+   /usr/local/bin/docker-entrypoint.sh mariadbd
    echo "Waiting for the SQL database to come online"
    "$WAIT_FOR_IT" "${MYSQL_HOSTNAME}:3306 -s"
 }
