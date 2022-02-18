@@ -1,0 +1,21 @@
+version: "3.1"
+
+services:
+  piler:
+    image: fabianbees/mail-piler
+    ports:
+      - "80:80"
+      - "25:25"
+    restart: always
+    volumes:
+      - ./piler-data/store:/var/piler/store/00
+      - ./piler-data/sphinx:/var/piler/sphinx
+      - ./piler-data/config:/etc/piler
+      - ./piler-data/mariadb:/var/lib/mysql
+    environment: 
+      - PILER_RETENTION=3650
+      - PILER_HOST=piler.yourdomain.com
+      - MYSQL_DATABASE=piler
+      - MYSQL_USER=piler-db-user
+      - MYSQL_PASSWORD=piler123
+      - MARIADB_ROOT_PASSWORD=enter-very-secure-root-pw
