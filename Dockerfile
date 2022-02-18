@@ -1,12 +1,10 @@
 FROM mariadb:10.7-focal
 ENV DEBIAN_FRONTEND noninteractive
-ENV PILER_USER piler
-ENV SPHINX_BIN_TARGZ sphinx-3.3.1-bin.tar.gz
-ENV PILER_DEB https://bitbucket.org/jsuto/piler/downloads/piler_1.3.11-focal-5c2ceb1_amd64.deb
-ENV SPHINX_DOWNLOAD_URL https://sphinxsearch.com/files/sphinx-3.3.1-b72d67b-linux-amd64.tar.gz
-#http://sphinxsearch.com/files/sphinx-3.4.1-efbcc65-linux-amd64.tar.gz
-#https://sphinxsearch.com/files/sphinx-3.3.1-b72d67b-linux-amd64.tar.gz
 
+ENV PILER_USER piler
+ENV PILER_DEB "https://bitbucket.org/jsuto/piler/downloads/piler_1.3.11-focal-5c2ceb1_amd64.deb"
+ENV SPHINX_VERSION "3.4.1"
+ENV SPHINX_DOWNLOAD_URL "http://sphinxsearch.com/files/sphinx-3.4.1-efbcc65-linux-amd64.tar.gz"
 
 
 RUN \
@@ -21,10 +19,11 @@ RUN \
     apt-get -y clean 
     
 # Install Sphinxsearch
- RUN wget --no-check-certificate -q -O ${SPHINX_BIN_TARGZ} ${SPHINX_DOWNLOAD_URL} && \
-    tar zxvf ${SPHINX_BIN_TARGZ} && \
-    rm -f ${SPHINX_BIN_TARGZ} && \
-    cp sphinx-3.3.1/bin/* /usr/bin/
+ RUN wget -O sphinx-${SPHINX_VERSION}-bin.tar.gz ${SPHINX_DOWNLOAD_URL} && \
+    tar zxvf sphinx-${SPHINX_VERSION}-bin.tar.gz && \
+    rm -f sphinx-${SPHINX_VERSION}-bin.tar.gz && \
+    mv sphinx-${SPHINX_VERSION}/bin/* /usr/bin/ && \
+    rm -rf sphinx-${SPHINX_VERSION}/
 
 RUN \
     echo "Adding piler user" && \
@@ -34,7 +33,8 @@ RUN \
 RUN curl -J -L -o /tmp/piler.deb "$PILER_DEB" && \
     dpkg -i /tmp/piler.deb && \
     echo "Adding cron job" && \
-    crontab -u $PILER_USER /usr/share/piler/piler.cron
+    crontab -u $PILER_USER /usr/share/piler/piler.cron && \
+    rm -f /tmp/piler.deb
 
 
 COPY rootfs/tmp/startup.sh rootfs/tmp/config-site.php rootfs/tmp/wait.sh rootfs/tmp/db-mysql.sql /usr/share/piler/
