@@ -8,22 +8,6 @@ ENV SPHINX_DOWNLOAD_URL https://sphinxsearch.com/files/sphinx-3.3.1-b72d67b-linu
 #https://sphinxsearch.com/files/sphinx-3.3.1-b72d67b-linux-amd64.tar.gz
 
 
-ENV PILER_HOSTNAME=localhost
-ENV PILER_RETENTION=3650
-ENV MYSQL_HOSTNAME=localhost
-ENV MYSQL_DATABASE=piler
-ENV MYSQL_USERNAME=root
-ENV MYSQL_PASSWORD=piler123
-ENV MARIADB_ROOT_PASSWORD=piler123
-
-ENV SPHINXCFG="/etc/piler/sphinx.conf"
-ENV PILER_RETENTION=${PILER_RETENTION:-2557}
-ENV PILER_HOST=${PILER_HOST:-archive.yourdomain.com}
-ENV PILER_CONF="/etc/piler/piler.conf"
-ENV CONFIG_SITE_PHP="/etc/piler/config-site.php"
-ENV CONFIG_PHP="/var/piler/www/config.php"
-ENV PILER_MYSQL_CNF="/etc/piler/.my.cnf"
-
 
 RUN \
 # Update and get dependencies
@@ -51,29 +35,6 @@ RUN curl -J -L -o /tmp/piler.deb "$PILER_DEB" && \
     dpkg -i /tmp/piler.deb && \
     echo "Adding cron job" && \
     crontab -u $PILER_USER /usr/share/piler/piler.cron
-
-# update config files
-RUN printf "[mysql]\nhost = ${MYSQL_HOSTNAME}\nuser = ${MYSQL_USERNAME}\npassword = ${MYSQL_PASSWORD}\n\n[mysqldump]\nhost = ${MYSQL_HOSTNAME}\nuser = ${MYSQL_USERNAME}\npassword = ${MYSQL_PASSWORD}\n" > "$PILER_MYSQL_CNF" && \
-    chown piler:piler "$PILER_MYSQL_CNF"  && \
-    chmod 400 "$PILER_MYSQL_CNF"  && \
-
-    echo "Updating sphinx configuration" && \
-    sed -e "s%MYSQL_HOSTNAME%$MYSQL_HOSTNAME%" -e "s%MYSQL_DATABASE%$MYSQL_DATABASE%" -e "s%MYSQL_USERNAME%$MYSQL_USERNAME%" -e "s%MYSQL_PASSWORD%$MYSQL_PASSWORD%" /etc/piler/sphinx.conf.dist > $SPHINXCFG && \
-
-    echo "Updating piler.conf configuration" && \
-    pilerconf | grep -v mysqlsocket | \
-    sed -e "s/tls_enable=0/tls_enable=1/g" \
-        -e "s/hostid=mailarchiver/hostid=${PILER_HOSTNAME}/g" \
-        -e "s/mysqlport=0/mysqlport=3306/" \
-        -e "s/default_retention_days=2557/default_retention_days=${PILER_RETENTION}/" \
-        -e "s/mysqlpwd=/mysqlpwd=${MYSQL_PASSWORD}/" \
-        -e "s/mysqlhost=/mysqlhost=${MYSQL_HOSTNAME}/" \
-        -e "s/mysqluser=piler/mysqluser=${MYSQL_USERNAME}/" \
-        -e "s/mysqldb=piler/mysqldb=${MYSQL_DATABASE}/" \
-        -e "s/pemfile=/pemfile=\/etc\/piler\/piler.pem/" > "$PILER_CONF" && \
-    chmod 600 "$PILER_CONF" && \
-    chown $PILER_USER:$PILER_USER /etc/piler/piler.conf
-
 
 
 COPY rootfs/tmp/startup.sh rootfs/tmp/config-site.php rootfs/tmp/wait.sh rootfs/tmp/db-mysql.sql /usr/share/piler/
