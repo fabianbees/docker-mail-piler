@@ -5,6 +5,15 @@
 This Docker deployment runs mariadb and Mail Piler with all its dependencies in a single container. 
 
 
+Delault login credentials are as follows
+```
+admin@local
+pilerrocks
+```
+
+Web-UI is accesible under port 80. (mostly `http://localhost`)
+
+
 ## Usage via plain docker cli
 
 run the following command but edit your environment variables first:
@@ -22,13 +31,16 @@ docker run -d \
   -p 80:80 \
   -p 443:443 \
   -p 25:25 \
-  -v $PWD/piler-data/store:/var/piler/store/00 \
-  -v $PWD/piler-data/sphinx:/var/piler/sphinx \
-  -v $PWD/piler-data/config:/etc/piler \
-  -v $PWD/piler-data/mariadb:/var/lib/mysql \
+  -v piler-data-store:/var/piler/store/00 \
+  -v piler-data-sphinx:/var/piler/sphinx \
+  -v piler-data-config:/etc/piler \
+  -v piler-data-mariadb:/var/lib/mysql \
   --restart unless-stopped \
   fabianbees/mail-piler:latest
 ```
+
+
+⚠️⚠️ **IMPORTANT: Bind-Mounts are currently not supported, so you have to use Docker volumes!!** ⚠️⚠️
 
 
 ## Usage via docker-compose
