@@ -10,8 +10,8 @@ script_path=$(readlink -f "$0")
 basedir=${script_path%/*}
 script_name=${script_path##*/}
 
-PUID=${PUID:-911}
-PGID=${PGID:-911}
+#PUID=${PUID:-911}
+#PGID=${PGID:-911}
 DATAROOTDIR="/usr/share"
 SYSCONFDIR="/etc"
 SPHINXCFG="/etc/piler/sphinx.conf"
