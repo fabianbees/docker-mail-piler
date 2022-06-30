@@ -2,7 +2,7 @@ FROM mariadb:10.7-focal
 ENV DEBIAN_FRONTEND noninteractive
 
 ENV PILER_USER piler
-ENV PILER_DEB "https://bitbucket.org/jsuto/piler/downloads/piler_1.3.11-focal-5c2ceb1_amd64.deb"
+ENV PILER_DEB "https://bitbucket.org/jsuto/piler/downloads/piler_1.3.12-focal-eb2b22b2_amd64.deb"
 ENV SPHINX_VERSION "3.4.1"
 ENV SPHINX_DOWNLOAD_URL "http://sphinxsearch.com/files/sphinx-3.4.1-efbcc65-linux-amd64.tar.gz"
 
