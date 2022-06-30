@@ -1,9 +1,10 @@
-FROM mariadb:10.7-focal
+FROM mariadb:10.8-jammy
 ENV DEBIAN_FRONTEND noninteractive
 
 ENV PILER_USER piler
 ENV PILER_DEB "https://bitbucket.org/jsuto/piler/downloads/piler_1.3.12-focal-eb2b22b2_amd64.deb"
 ENV SPHINX_VERSION "3.4.1"
+ENV OPENSSL_VERSION "1.1.1p"
 ENV SPHINX_DOWNLOAD_URL "http://sphinxsearch.com/files/sphinx-3.4.1-efbcc65-linux-amd64.tar.gz"
 
 
@@ -11,13 +12,33 @@ RUN \
 # Update and get dependencies
     apt-get update && \
     apt-get -y --no-install-recommends install \
-    apt-utils nano wget rsyslog openssl sysstat php7.4-cli php7.4-cgi php7.4-mysql php7.4-fpm php7.4-zip php7.4-ldap \
-    php7.4-gd php7.4-curl php7.4-xml php7.4-memcached catdoc unrtf poppler-utils nginx tnef sudo libzip5 \
-    libtre5 cron python3 python3-mysqldb ca-certificates curl supervisor default-libmysqlclient-dev  mariadb-client && \
+    apt-utils nano wget rsyslog openssl sysstat php8.1-cli php8.1-cgi php8.1-mysql php8.1-fpm php8.1-zip \
+    php8.1-ldap php8.1-gd php8.1-curl php8.1-xml php8.1-memcached catdoc unrtf poppler-utils nginx tnef sudo \
+    libtre5 cron python3 python3-mysqldb ca-certificates curl supervisor default-libmysqlclient-dev mariadb-client && \
     # Cleanup
     apt-get -y autoremove && \
-    apt-get -y clean 
-    
+    apt-get -y clean
+
+# Install missing openssl dependency
+RUN apt install -y make gcc && \
+    wget https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
+    tar -xvf openssl-${OPENSSL_VERSION}.tar.gz && \
+    cd openssl-${OPENSSL_VERSION} && \
+    ./config && \
+    make -j && \
+    #make -j test && \
+    make -j install && \
+    cd / && rm -rf openssl-* && \
+    # Cleanup
+    apt remove -y make gcc && \
+    apt-get -y autoremove && \
+    apt-get -y clean
+
+# Install missing libzip5 dependency
+RUN wget http://de.archive.ubuntu.com/ubuntu/pool/universe/libz/libzip/libzip5_1.5.1-0ubuntu1_amd64.deb && \
+    dpkg --force-all -i libzip5_1.5.1-0ubuntu1_amd64.deb && \
+    rm libzip5_1.5.1-0ubuntu1_amd64.deb
+
 # Install Sphinxsearch
  RUN wget -O sphinx-${SPHINX_VERSION}-bin.tar.gz ${SPHINX_DOWNLOAD_URL} && \
     tar zxvf sphinx-${SPHINX_VERSION}-bin.tar.gz && \
