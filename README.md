@@ -80,3 +80,41 @@ docker-compose up -d
 ```
 
 > If using Portainer, just paste the `docker-compose.yaml` contents into the stack config and add your *environment variables* directly in the UI.
+
+
+### Database Upgrade (manual step!)
+
+> The mail-piler container must be stopped during this operation !!!
+
+If you get an error that your database needs to be upgraded, you must do this manually by the following steps:
+
+1. Run the database with the old database image and shut it down gracefully:
+
+for example: 
+```
+docker run -d \
+  --name=db-upgrade \
+  -e MYSQL_DATABASE=piler \
+  -e MYSQL_USER=piler-db-user \
+  -e MYSQL_PASSWORD=piler123 \
+  -e MARIADB_ROOT_PASSWORD=enter-very-secure-root-pw \
+  -v piler-data-mariadb:/var/lib/mysql \
+  mariadb:10.6-focal
+```
+
+2. After the gracefull shutdown the new image can be used with the parameter ```-e MARIADB_AUTO_UPGRADE=true```.
+This starts an automatic update.
+After that shutdown this temporary container and you can restart the mail-piler container.
+
+for example: 
+```
+docker run -d \
+  --name=db-upgrade \
+  -e MYSQL_DATABASE=piler \
+  -e MYSQL_USER=piler-db-user \
+  -e MYSQL_PASSWORD=piler123 \
+  -e MARIADB_ROOT_PASSWORD=enter-very-secure-root-pw \
+  -v piler-data-mariadb:/var/lib/mysql \
+  -e MARIADB_AUTO_UPGRADE=true \
+  mariadb:10.10-jammy
+```
