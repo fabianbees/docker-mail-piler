@@ -1,8 +1,8 @@
-FROM mariadb:10.7-focal
+FROM mariadb:10.10-jammy
 ENV DEBIAN_FRONTEND noninteractive
 
 ENV PILER_USER piler
-ENV PILER_DEB "https://bitbucket.org/jsuto/piler/downloads/piler_1.3.12-focal-eb2b22b2_amd64.deb"
+ENV PILER_DEB "https://bitbucket.org/jsuto/piler/downloads/piler_1.4.1-jammy-c860ca67_amd64.deb"
 ENV SPHINX_VERSION "3.4.1"
 ENV SPHINX_DOWNLOAD_URL "http://sphinxsearch.com/files/sphinx-3.4.1-efbcc65-linux-amd64.tar.gz"
 
@@ -11,9 +11,9 @@ RUN \
 # Update and get dependencies
     apt-get update && \
     apt-get -y --no-install-recommends install \
-    apt-utils nano wget rsyslog openssl sysstat php7.4-cli php7.4-cgi php7.4-mysql php7.4-fpm php7.4-zip php7.4-ldap \
-    php7.4-gd php7.4-curl php7.4-xml php7.4-memcached catdoc unrtf poppler-utils nginx tnef sudo libzip5 \
-    libtre5 cron python3 python3-mysqldb ca-certificates curl supervisor default-libmysqlclient-dev  mariadb-client && \
+    apt-utils nano wget rsyslog openssl sysstat php-cli php-cgi php-mysql php-fpm php-zip php-ldap php-gd php-curl \
+    php-xml php-memcached catdoc unrtf poppler-utils nginx tnef sudo libtre5 cron python3 python3-mysqldb \
+    ca-certificates curl supervisor default-libmysqlclient-dev mariadb-client && \
     # Cleanup
     apt-get -y autoremove && \
     apt-get -y clean 
