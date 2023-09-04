@@ -1,14 +1,14 @@
-FROM mariadb:10.10-jammy
+FROM mariadb:10.11-jammy
 ENV DEBIAN_FRONTEND noninteractive
 
 ENV PILER_USER piler
-ENV PILER_DEB "https://bitbucket.org/jsuto/piler/downloads/piler_1.4.1-jammy-c860ca67_amd64.deb"
+ENV PILER_DEB "https://bitbucket.org/jsuto/piler/downloads/piler_1.4.4-jammy-553ebb4f_amd64.deb"
 ENV SPHINX_VERSION "3.4.1"
 ENV SPHINX_DOWNLOAD_URL "http://sphinxsearch.com/files/sphinx-3.4.1-efbcc65-linux-amd64.tar.gz"
 
 
 RUN \
-# Update and get dependencies
+# Update and get dependencies (using php8.1)
     apt-get update && \
     apt-get -y --no-install-recommends install \
     apt-utils nano wget rsyslog openssl sysstat php-cli php-cgi php-mysql php-fpm php-zip php-ldap php-gd php-curl \
