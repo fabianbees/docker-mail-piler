@@ -86,9 +86,9 @@ make_certificate() {
 initialize_piler_data() {
    echo "Initilizing piler data"
 
-   if [[ "$(echo "show tables" | mysql --defaults-file="$PILER_MYSQL_CNF" "$MYSQL_DATABASE")" == "" ]]; then
-      echo "create database if not exists piler character set utf8mb4" | mysql --defaults-file="$PILER_MYSQL_CNF"
-      mysql --defaults-file="$PILER_MYSQL_CNF" "$MYSQL_DATABASE" < /usr/share/piler/db-mysql.sql
+   if [[ "$(echo "show tables" | mariadb --defaults-file="$PILER_MYSQL_CNF" "$MYSQL_DATABASE")" == "" ]]; then
+      echo "create database if not exists piler character set utf8mb4" | mariadb --defaults-file="$PILER_MYSQL_CNF"
+      mariadb --defaults-file="$PILER_MYSQL_CNF" "$MYSQL_DATABASE" < /usr/share/piler/db-mariadb.sql
    fi
 
    [[ -f /var/piler/sphinx/main1.spp ]] || su $PILER_USER -c "indexer --all --config ${SPHINXCFG}"

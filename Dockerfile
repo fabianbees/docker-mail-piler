@@ -37,7 +37,7 @@ RUN curl -J -L -o /tmp/piler.deb "$PILER_DEB" && \
     rm -f /tmp/piler.deb
 
 
-COPY rootfs/tmp/startup.sh rootfs/tmp/config-site.php rootfs/tmp/wait.sh rootfs/tmp/db-mysql.sql /usr/share/piler/
+COPY rootfs/tmp/startup.sh rootfs/tmp/config-site.php rootfs/tmp/wait.sh rootfs/tmp/db-mariadb.sql /usr/share/piler/
 COPY rootfs/etc/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 COPY rootfs/etc/nginx/nginx.conf /rootfs/etc/nginx/piler.conf /etc/nginx/
 
